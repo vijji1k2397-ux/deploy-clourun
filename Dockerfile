@@ -1,20 +1,19 @@
-# Use an official Python runtime as a parent image
+# Use official Python slim image
 FROM python:3.9-slim
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Set the working directory
+# Set working directory in the container
 WORKDIR /app
 
 # Copy dependencies file and install
 COPY requirements.txt .
-EXPOSE 8080
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy your app code
+# Copy your application code
 COPY . .
 
-# Run the application
-CMD ["python", "app.py"]
+# Tell Cloud Run what port to expose
+EXPOSE 8080
+
+# Run the app using Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "main:app"]
